@@ -1,0 +1,21 @@
+{
+  "name": "cost_manager_project",
+  "version": "1.0.0",
+  "description": "Cost Manager RESTful Web Services",
+  "main": "services/users_service.js",
+  "scripts": {
+    "start": "concurrently \"node services/users_service.js\" \"node services/costs_service.js\" \"node services/about_service.js\" \"node services/logs_service.js\"",
+    "test": "jest --detectOpenHandles"
+	},
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.4",
+    "pino": "^8.20.0"
+  },
+  "devDependencies": {
+    "jest": "^30.3.0",
+    "supertest": "^7.2.2"
+  }
+}
