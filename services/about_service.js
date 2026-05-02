@@ -22,10 +22,10 @@ app.use((req, res, next) => {
  */
 app.get('/api/about', (req, res) => {
     try {
-        // Hardcoded team data. You should change these to your actual details.
         const team_members = [
-            { first_name: "israel", last_name: "israeli" },
-            { first_name: "moshe", last_name: "cohen" }
+            { first_name: "daniel", last_name: "firley" },
+            { first_name: "yoni", last_name: "libman" },
+            { first_name: "yuval", last_name: "reznik" }
         ];
 
         res.status(200).json(team_members);
