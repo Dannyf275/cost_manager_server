@@ -5,10 +5,10 @@ import sys
 filename = input("filename=")
 
 # Replace these dummy URLs with your actual Render web service URLs!
-a = "https://cost-manager-logs.onrender.com"    # The logs service
-b = "https://cost-manager-users.onrender.com"   # The users service
-c = "https://cost-manager-costs.onrender.com"   # The costs service
-d = "https://cost-manager-about.onrender.com"   # The about service
+a = "https://costmanager-logs-q6jc.onrender.com"    # The logs service
+b = "https://costmanager-users-roxj.onrender.com"   # The users service
+c = "https://costmanager-costs-l73m.onrender.com"   # The costs service
+d = "https://costmanager-about.onrender.com"   # The about service
 
 output = open(filename, "w")
 sys.stdout = output

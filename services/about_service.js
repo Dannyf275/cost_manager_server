@@ -4,7 +4,7 @@ const express = require('express');
 const logger = require('../utils/logger');
 // Note: DB connection is not strictly necessary here if we use hardcoded data, 
 // but we include the logger which connects to the DB for logging.
-const connect_db = require('./utils/db_connection');
+const connect_db = require('../utils/db_connection');
 
 const app = express();
 
