@@ -5,7 +5,7 @@ const logger = require('./logger');
  * Establishes a connection to the MongoDB Atlas database.
  * Uses the connection string from the .env file.
  */
-const connect_db = async () => {
+const connectDb = async () => {
     try {
         // Attempt to connect to the database
         await mongoose.connect(process.env.MONGODB_URI);
@@ -18,4 +18,4 @@ const connect_db = async () => {
     }
 };
 
-module.exports = connect_db;
+module.exports = connectDb;

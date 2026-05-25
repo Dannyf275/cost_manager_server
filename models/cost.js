@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
  * Schema definition for the 'costs' collection.
  * Maps description, category, userid, sum, and the date the cost was created.
  */
-const cost_schema = new mongoose.Schema({
+const costSchema = new mongoose.Schema({ // Updated to camelCase
     // Description of the cost item
     description: { 
         type: String, 
@@ -33,4 +33,4 @@ const cost_schema = new mongoose.Schema({
     }
 }, { versionKey: false });
 
-module.exports = mongoose.model('Cost', cost_schema);
+module.exports = mongoose.model('Cost', costSchema);

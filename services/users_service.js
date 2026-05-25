@@ -1,7 +1,7 @@
 const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') }); // Explicitly finds .env in root
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') }); 
 const express = require('express');
-const connect_db = require('../utils/db_connection'); // Navigates up
+const connectDb = require('../utils/db_connection'); // Updated to camelCase
 const logger = require('../utils/logger');
 const User = require('../models/user');
 const Cost = require('../models/cost');
@@ -9,6 +9,7 @@ const Cost = require('../models/cost');
 const app = express();
 app.use(express.json());
 
+// Middleware to log every incoming HTTP request
 app.use((req, res, next) => {
     logger.info({ method: req.method, url: req.originalUrl, msg: 'Endpoint accessed' });
     next();
@@ -32,21 +33,28 @@ app.post('/api/add', async (req, res) => {
             });
         }
 
-        // Create a new User document
-        const new_user = new User({ id, first_name, last_name, birthday });
+        // Create a new User document (using camelCase for variable names)
+        const newUser = new User({ id, first_name, last_name, birthday });
         
         // Save the user to the database
-        const saved_user = await new_user.save();
+        const savedUser = await newUser.save();
 
         // Return the saved user details omitting MongoDB internal properties
         res.status(201).json({
-            id: saved_user.id,
-            first_name: saved_user.first_name,
-            last_name: saved_user.last_name,
-            birthday: saved_user.birthday
+            id: savedUser.id,
+            first_name: savedUser.first_name,
+            last_name: savedUser.last_name,
+            birthday: savedUser.birthday
         });
     } catch (error) {
-        // Handle database or server errors
+        // Handle MongoDB duplicate key error for unique constraints (e.g., existing user ID)
+        if (error.code === 11000) {
+            return res.status(400).json({ 
+                id: req.body.id || null, 
+                message: "User already exists in the database." 
+            });
+        }
+        // Handle other database or server errors
         res.status(500).json({ 
             id: req.body.id || null, 
             message: `Error adding user: ${error.message}` 
@@ -61,26 +69,26 @@ app.post('/api/add', async (req, res) => {
 app.get('/api/users/:id', async (req, res) => {
     try {
         // Extract the user ID from the URL parameters and convert to a number
-        const user_id = Number(req.params.id);
+        const userId = Number(req.params.id);
 
         // Find the user in the database
-        const user = await User.findOne({ id: user_id });
+        const user = await User.findOne({ id: userId });
 
         // If the user does not exist, return an error
         if (!user) {
             return res.status(404).json({ 
-                id: user_id, 
+                id: userId, 
                 message: "User not found." 
             });
         }
 
         // Find all cost items associated with this user ID
-        const user_costs = await Cost.find({ userid: user_id });
+        const userCosts = await Cost.find({ userid: userId });
 
         // Calculate the total sum of all costs for this user
-        let total_costs = 0;
-        for (let i = 0; i < user_costs.length; i++) {
-            total_costs += user_costs[i].sum;
+        let totalCosts = 0;
+        for (let i = 0; i < userCosts.length; i++) {
+            totalCosts += userCosts[i].sum;
         }
 
         // Return the formatted JSON response
@@ -88,7 +96,7 @@ app.get('/api/users/:id', async (req, res) => {
             first_name: user.first_name,
             last_name: user.last_name,
             id: user.id,
-            total: total_costs
+            total: totalCosts
         });
     } catch (error) {
         // Handle server errors
@@ -127,8 +135,8 @@ const PORT = process.env.PORT || process.env.USERS_SERVICE_PORT || 3001;
  */
 if (require.main === module) {
     app.listen(PORT, async () => {
-        await connect_db();
-        console.log(`Service is running on port ${PORT}`);
+        await connectDb(); // Updated function call
+        console.log(`Users Service is running on port ${PORT}`);
     });
 }
 

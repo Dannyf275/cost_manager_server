@@ -7,7 +7,7 @@ const Log = require('../models/log');
  */
 const stream = {
     write: (msg) => {
-        // [NEW CHANGE] Bypass database logging completely if we are running unit tests
+        // Bypass database logging completely if we are running unit tests
         // This prevents the "MongoExpiredSessionError" race condition.
         if (process.env.NODE_ENV === 'test') {
             return;
@@ -15,18 +15,18 @@ const stream = {
 
         try {
             // Parse the JSON string provided by Pino
-            const log_entry = JSON.parse(msg);
+            const logEntry = JSON.parse(msg);
             
             // Create a new Log document
-            const new_log = new Log({
-                method: log_entry.method || 'SYSTEM',
-                url: log_entry.url || 'N/A',
-                message: log_entry.msg,
-                timestamp: new Date(log_entry.time)
+            const newLog = new Log({
+                method: logEntry.method || 'SYSTEM',
+                url: logEntry.url || 'N/A',
+                message: logEntry.msg,
+                timestamp: new Date(logEntry.time)
             });
             
             // Save the log to MongoDB asynchronously
-            new_log.save().catch(err => console.error('Log save error:', err));
+            newLog.save().catch(err => console.error('Log save error:', err));
         } catch (e) {
             console.error('Pino stream parsing error:', e);
         }

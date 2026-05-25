@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
  * Maps the required properties: id, first_name, last_name, and birthday.
  * Disables the versionKey (__v) as it is not required in the output.
  */
-const user_schema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({ // Updated to camelCase
     // The specific user ID (different from MongoDB's _id)
     id: { 
         type: Number, 
@@ -29,4 +29,4 @@ const user_schema = new mongoose.Schema({
     }
 }, { versionKey: false });
 
-module.exports = mongoose.model('User', user_schema);
+module.exports = mongoose.model('User', userSchema);

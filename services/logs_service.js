@@ -1,7 +1,7 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const express = require('express');
-const connect_db = require('../utils/db_connection');
+const connectDb = require('../utils/db_connection'); // Updated to camelCase
 const logger = require('../utils/logger');
 const Log = require('../models/log');
 
@@ -28,15 +28,16 @@ app.get('/api/logs', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || process.env.USERS_SERVICE_PORT || 3004;
+// Updated port variable to be specific to this service
+const PORT = process.env.PORT || process.env.LOGS_SERVICE_PORT || 3004;
 /*
- * Only start the server if this file is run directly (e.g., node users_service.js).
+ * Only start the server if this file is run directly (e.g., node logs_service.js).
  * If it is being imported by Jest for testing, do not bind to the port.
  */
 if (require.main === module) {
     app.listen(PORT, async () => {
-        await connect_db();
-        console.log(`Service is running on port ${PORT}`);
+        await connectDb(); // Updated function call
+        console.log(`Logs Service is running on port ${PORT}`);
     });
 }
 

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
  * Schema definition for the 'logs' collection.
  * Used by the Pino logger utility to store HTTP request logs and endpoint access.
  */
-const log_schema = new mongoose.Schema({
+const logSchema = new mongoose.Schema({ // Updated to camelCase
     // The HTTP method (GET, POST, etc.)
     method: String,
     // The URL endpoint accessed
@@ -18,4 +18,4 @@ const log_schema = new mongoose.Schema({
     }
 }, { versionKey: false });
 
-module.exports = mongoose.model('Log', log_schema);
+module.exports = mongoose.model('Log', logSchema);

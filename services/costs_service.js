@@ -1,7 +1,7 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const express = require('express');
-const connect_db = require('../utils/db_connection');
+const connectDb = require('../utils/db_connection'); // Updated to camelCase
 const logger = require('../utils/logger');
 const Cost = require('../models/cost');
 const Report = require('../models/report');
@@ -31,27 +31,27 @@ app.post('/api/add', async (req, res) => {
         }
 
         // Validate that the category is one of the allowed options
-        const allowed_categories = ['food', 'health', 'housing', 'sports', 'education'];
-        if (!allowed_categories.includes(category)) {
+        const allowedCategories = ['food', 'health', 'housing', 'sports', 'education']; // Updated to camelCase
+        if (!allowedCategories.includes(category)) {
             return res.status(400).json({ id: null, message: "Invalid category." });
         }
 
         // Validate that the user exists (As per Q&A #11)
-        const user_exists = await User.findOne({ id: userid });
-        if (!user_exists) {
+        const userExists = await User.findOne({ id: userid }); // Updated to camelCase
+        if (!userExists) {
             return res.status(404).json({ id: null, message: "User does not exist." });
         }
 
         // Create and save the new cost
-        const new_cost = new Cost({ description, category, userid, sum });
-        const saved_cost = await new_cost.save();
+        const newCost = new Cost({ description, category, userid, sum }); // Updated to camelCase
+        const savedCost = await newCost.save(); // Updated to camelCase
 
         // Return the saved document
         res.status(201).json({
-            description: saved_cost.description,
-            category: saved_cost.category,
-            userid: saved_cost.userid,
-            sum: saved_cost.sum
+            description: savedCost.description,
+            category: savedCost.category,
+            userid: savedCost.userid,
+            sum: savedCost.sum
         });
     } catch (error) {
         res.status(500).json({ id: null, message: `Error adding cost: ${error.message}` });
@@ -61,8 +61,7 @@ app.post('/api/add', async (req, res) => {
 /*
  * GET /api/report
  * Retrieves a monthly report for a specific user.
- * 
- * COMPUTED DESIGN PATTERN IMPLEMENTATION:
+ * * COMPUTED DESIGN PATTERN IMPLEMENTATION:
  * This endpoint implements the Computed Design Pattern. When a report is requested,
  * the system first checks the 'reports' collection to see if the calculation for 
  * this specific user, year, and month has already been performed and saved.
@@ -84,28 +83,28 @@ app.get('/api/report', async (req, res) => {
         }
 
         // Check if report is already computed and saved
-        const existing_report = await Report.findOne({ userid, year, month });
-        if (existing_report) {
+        const existingReport = await Report.findOne({ userid, year, month }); // Updated to camelCase
+        if (existingReport) {
             return res.status(200).json({
-                userid: existing_report.userid,
-                year: existing_report.year,
-                month: existing_report.month,
-                costs: existing_report.costs
+                userid: existingReport.userid,
+                year: existingReport.year,
+                month: existingReport.month,
+                costs: existingReport.costs
             });
         }
 
         // If not found, compute the report
-        const start_date = new Date(year, month - 1, 1);
-        const end_date = new Date(year, month, 1);
+        const startDate = new Date(year, month - 1, 1); // Updated to camelCase
+        const endDate = new Date(year, month, 1); // Updated to camelCase
 
         // Fetch costs for the specific month
-        const raw_costs = await Cost.find({
+        const rawCosts = await Cost.find({ // Updated to camelCase
             userid: userid,
-            date: { $gte: start_date, $lt: end_date }
+            date: { $gte: startDate, $lt: endDate }
         });
 
         // Initialize structure ensuring all categories exist, even if empty
-        const grouped_costs = {
+        const groupedCosts = { // Updated to camelCase
             food: [],
             education: [],
             health: [],
@@ -114,10 +113,10 @@ app.get('/api/report', async (req, res) => {
         };
 
         // Populate the groups with cost data
-        for (let i = 0; i < raw_costs.length; i++) {
-            const cost = raw_costs[i];
+        for (let i = 0; i < rawCosts.length; i++) {
+            const cost = rawCosts[i];
             const day = cost.date.getDate();
-            grouped_costs[cost.category].push({
+            groupedCosts[cost.category].push({
                 sum: cost.sum,
                 description: cost.description,
                 day: day
@@ -125,46 +124,47 @@ app.get('/api/report', async (req, res) => {
         }
 
         // Format exactly as requested in the project instructions
-        const final_costs_array = [
-            { food: grouped_costs.food },
-            { education: grouped_costs.education },
-            { health: grouped_costs.health },
-            { housing: grouped_costs.housing },
-            { sports: grouped_costs.sports }
+        const finalCostsArray = [ // Updated to camelCase
+            { food: groupedCosts.food },
+            { education: groupedCosts.education },
+            { health: groupedCosts.health },
+            { housing: groupedCosts.housing },
+            { sports: groupedCosts.sports }
         ];
 
-        const report_data = {
+        const reportData = { // Updated to camelCase
             userid: userid,
             year: year,
             month: month,
-            costs: final_costs_array
+            costs: finalCostsArray
         };
 
         // Save computed pattern to database ONLY if it's a past month
-        const current_date = new Date();
-        const is_past_month = (year < current_date.getFullYear()) || 
-                              (year === current_date.getFullYear() && month < (current_date.getMonth() + 1));
+        const currentDate = new Date(); // Updated to camelCase
+        const isPastMonth = (year < currentDate.getFullYear()) ||  // Updated to camelCase
+                              (year === currentDate.getFullYear() && month < (currentDate.getMonth() + 1));
 
-        if (is_past_month) {
-            const saved_report = new Report(report_data);
-            await saved_report.save();
+        if (isPastMonth) {
+            const savedReport = new Report(reportData); // Updated to camelCase
+            await savedReport.save();
         }
 
-        res.status(200).json(report_data);
+        res.status(200).json(reportData);
     } catch (error) {
         res.status(500).json({ id: null, message: `Error generating report: ${error.message}` });
     }
 });
 
-const PORT = process.env.PORT || process.env.USERS_SERVICE_PORT || 3002;
+// Updated port variable to be specific to this service
+const PORT = process.env.PORT || process.env.COSTS_SERVICE_PORT || 3002; 
 /*
- * Only start the server if this file is run directly (e.g., node users_service.js).
+ * Only start the server if this file is run directly (e.g., node costs_service.js).
  * If it is being imported by Jest for testing, do not bind to the port.
  */
 if (require.main === module) {
     app.listen(PORT, async () => {
-        await connect_db();
-        console.log(`Service is running on port ${PORT}`);
+        await connectDb(); // Updated function call
+        console.log(`Costs Service is running on port ${PORT}`);
     });
 }
 
